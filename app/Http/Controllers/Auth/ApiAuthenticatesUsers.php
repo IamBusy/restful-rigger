@@ -23,9 +23,12 @@ trait ApiAuthenticatesUsers
     }
 
 
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     protected function authenticateClient(Request $request)
     {
-        //dd(config('p'))
         $request->request->add(config('passport') + [
                 'username' => $request->input($this->username()),
                 'password' => $request->input('password'),
@@ -38,6 +41,22 @@ trait ApiAuthenticatesUsers
 
         $response = \Route::dispatch($proxy);
         return $response;
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function username()
+    {
+        $request = app('request');
+        if ($request->has('email')) {
+            return 'email';
+        } elseif ($request->has('phone')) {
+            return 'phone';
+        }
+        return 'username';
     }
 
 

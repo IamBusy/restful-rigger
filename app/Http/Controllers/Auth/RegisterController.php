@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use App\Entities\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -20,7 +22,10 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RegistersUsers, ApiAuthenticatesUsers {
+        ApiAuthenticatesUsers::guard insteadof RegistersUsers;
+        ApiAuthenticatesUsers::redirectPath insteadof RegistersUsers;
+    }
 
     /**
      * Where to redirect users after registration.
@@ -58,7 +63,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\User
+     * @return \App\Entities\User
      */
     protected function create(array $data)
     {
@@ -67,5 +72,14 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+        return $this->login($request);
+
     }
 }

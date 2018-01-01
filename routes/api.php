@@ -14,7 +14,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::namespace('Auth')->group(function () {
-    Route::any('login','LoginController@login')->name('login');
+    Route::post('login', 'LoginController@login')->name('login');
+    Route::post('register', 'RegisterController@register')->name('register');
+    Route::any('reset', 'ResetPasswordController@reset')->middleware('auth:api')->name('reset_password');
+    Route::post('logout', 'LoginController@logout')->middleware('auth:api')->name('logout');
+});
+
+/**
+ * Define router here which should be authenticated
+ */
+Route::group(['middleware' => ['auth:api']], function () {
+
 });
 
 

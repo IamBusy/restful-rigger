@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Auth\Events\PasswordReset;
 
 class ResetPasswordController extends Controller
 {
@@ -18,7 +22,6 @@ class ResetPasswordController extends Controller
     |
     */
 
-    use ResetsPasswords;
 
     /**
      * Where to redirect users after resetting their password.
@@ -34,6 +37,37 @@ class ResetPasswordController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware('auth:api');
+    }
+
+    public function reset(Request $request)
+    {
+        $payload = $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:6',
+        ]);
+        $user = $request->user();
+        if($user->email == $payload['email']) {
+            $this->resetPassword($user, $payload['password']);
+            return response(['message' => '重置成功']);
+        }
+        throw new UnauthorizedException();
+    }
+
+
+    protected function sendResetFailedResponse(Request $request, $response)
+    {
+        return response(['message' => '重置失败']);
+    }
+
+    public function resetPassword($user, $password)
+    {
+        $user->password = Hash::make($password);
+
+        $user->setRememberToken(Str::random(60));
+
+        $user->save();
+
+        event(new PasswordReset($user));
     }
 }

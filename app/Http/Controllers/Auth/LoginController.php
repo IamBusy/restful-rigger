@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -34,6 +35,18 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     */
+    public function logout(Request $request)
+    {
+        if($this->guard()->check()) {
+            $this->guard()->user()->token()->revoke();
+        }
+        return response(['message' => '退出登陆成功']);
     }
 
 

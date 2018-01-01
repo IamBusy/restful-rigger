@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
@@ -51,6 +52,8 @@ class Handler extends ExceptionHandler
     {
         if($exception instanceof ValidationException) {
             return response(['message' => '数据填写错误','errors' => $exception->errors()], 412);
+        } elseif ($exception instanceof UnauthorizedException) {
+            return response(['message' => '未授权'], 401);
         }
         return parent::render($request, $exception);
     }
