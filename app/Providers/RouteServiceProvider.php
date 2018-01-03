@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Str;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -24,6 +25,7 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        $this->mapDynamicRoutes();
 
         parent::boot();
     }
@@ -38,8 +40,6 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
-
-        //
     }
 
     /**
@@ -69,5 +69,17 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    protected function mapDynamicRoutes() {
+        Route::prefix('auto')
+            ->namespace($this->namespace)
+            ->group(function() {
+                foreach (config('entity', []) as $name => $config) {
+                    Route::apiResource(Str::plural($name), 'BaseController');
+                }
+            });
+
+
     }
 }
