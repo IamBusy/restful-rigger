@@ -27,6 +27,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 });
 
+//Route::prefix('auto')->any('/{target}', 'BaseController@handle');
+
 
 
 
