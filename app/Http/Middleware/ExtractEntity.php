@@ -27,7 +27,7 @@ class ExtractEntity
         } else {
             $name = $parts[0];
         }
-        $request['rigger_entity'] = Str::ucfirst(Str::singular($name));
+        $request->attributes->set('rigger_entity', Str::ucfirst(Str::singular($name)));
         return $next($request);
     }
 }

@@ -72,9 +72,9 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     protected function mapDynamicRoutes() {
-        Route::prefix('auto')
+        Route::prefix(config('rigger.api.prefix'))
             ->namespace($this->namespace)
-            ->middleware('extract.entity')
+            ->middleware(['extract.entity','api'])
             ->group(function() {
                 foreach (config('entity', []) as $name => $config) {
                     Route::apiResource(Str::plural($name), 'BaseController');
