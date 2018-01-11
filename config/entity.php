@@ -39,5 +39,17 @@ return [
         'hasMany'   =>  [],
         'belongsToMany' =>  [],
 
-    ]
+        /*
+        |--------------------------------------------------------------------------
+        | Routes
+        |--------------------------------------------------------------------------
+        |  Set a subset of actions the controller should handle instead of the full set of default actions
+        */
+        'routes'    =>  [],
+
+    ],
+
+    'role'  =>  [
+
+    ],
 ];

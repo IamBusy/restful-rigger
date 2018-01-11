@@ -72,12 +72,25 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     protected function mapDynamicRoutes() {
+        $validMethod =  [
+            'store' =>  'post',
+            'index' =>  'get',
+            'show'  =>  'get',
+            'update'    =>  'put',
+            'destroy'   =>  'delete'
+        ];
         Route::prefix(config('rigger.api.prefix'))
             ->namespace($this->namespace)
             ->middleware(['extract.entity','api'])
-            ->group(function() {
+            ->group(function() use ($validMethod) {
                 foreach (config('entity', []) as $name => $config) {
-                    Route::apiResource(Str::plural($name), 'BaseController');
+                    if(! class_exists('App\Http\Controllers\\'.$name.'Controller')) {
+                        $options = [];
+                        if(array_key_exists('routes', $config)) {
+                            $options = $config['routes'];
+                        }
+                        Route::resource(Str::plural($name), 'BaseController', $options);
+                    }
                 }
             });
 

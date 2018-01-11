@@ -34,16 +34,21 @@ class RiggerServiceProvider extends ServiceProvider
     }
 
     protected function bindEntity($name, $config) {
-        $this->app->bind('App\Entities\\'.$name, function ($app, $parameters) use ($name, $config) {
-            $table = array_key_exists('table', $config)? $config['table']:Str::plural(Str::lower($name));
-            $entity = new Entity($parameters);
-            $entity->setTable($table);
+        $this->app->bindIf('App\Entities\\'.$name, function ($app, $parameters) use ($name, $config) {
+            if(class_exists('App\Entities\\'.$name)) {
+                $class = "App\Entities\\$name";
+                $entity = new $class($parameters);
+            } else {
+                $table = array_key_exists('table', $config)? $config['table']:Str::plural(Str::lower($name));
+                $entity = new Entity($parameters);
+                $entity->setTable($table);
+            }
             return $entity;
         });
     }
 
     protected function bindRepository($name, $config) {
-        $this->app->bind('App\Repositories\\'.$name.'Repository', function ($app, $parameters) use ($name, $config) {
+        $this->app->bindIf('App\Repositories\\'.$name.'Repository', function ($app, $parameters) use ($name, $config) {
             $repository = new EntityRepositoryEloquent($app);
             $repository->setModelName('App\Entities\\'.$name);
             $repository->resetModel();
