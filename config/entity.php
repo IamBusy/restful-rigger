@@ -47,9 +47,39 @@ return [
         */
         'routes'    =>  [],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Authentication and authorization
+        |--------------------------------------------------------------------------
+        |  If authenticated is true or an array of actions, then all the action will be authenticated,
+        |  'authenticated' =>  ['update', 'destroy']
+        |
+        |  As default, for each action handler need a permission named {action}-{resource_name},
+        |  which like this: update-user
+        |
+        |  You can also add an array to describe the authentication and authorization of a specific action, for example:
+        |
+        |   'update'    =>  [
+        |       'authenticated' =>  true,
+        |       'authorized'    =>  [
+        |           'role'          =>  'admin',
+        |           'permission'    =>  'update-user'
+        |       ],
+        |   ]
+        |  This config will override the same key in entity if there exist
+        */
+        'authenticated' =>  false,
+
+        'authorized'    =>  '${action}-${resource}',
+
+
     ],
 
     'role'  =>  [
 
     ],
+
+    'permissions'   =>  [
+
+    ]
 ];

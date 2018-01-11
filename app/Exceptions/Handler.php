@@ -54,6 +54,8 @@ class Handler extends ExceptionHandler
             return response(['message' => '数据填写错误','errors' => $exception->errors()], 412);
         } elseif ($exception instanceof UnauthorizedException) {
             return response(['message' => '未授权'], 401);
+        } elseif ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
+            return response(['message' => $exception->getMessage()], $exception->getStatusCode());
         }
         return parent::render($request, $exception);
     }

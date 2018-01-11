@@ -89,7 +89,8 @@ class RouteServiceProvider extends ServiceProvider
                         if(array_key_exists('routes', $config)) {
                             $options = $config['routes'];
                         }
-                        Route::resource(Str::plural($name), 'BaseController', $options);
+
+                        Route::apiResource(Str::plural($name), 'BaseController', $options);
                     }
                 }
             });
