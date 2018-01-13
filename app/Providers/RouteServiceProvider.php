@@ -81,7 +81,7 @@ class RouteServiceProvider extends ServiceProvider
         ];
         Route::prefix(config('rigger.api.prefix'))
             ->namespace($this->namespace)
-            ->middleware(['extract.entity','api'])
+            ->middleware(['extract.entity','api','auth.auto'])
             ->group(function() use ($validMethod) {
                 foreach (config('entity', []) as $name => $config) {
                     if(! class_exists('App\Http\Controllers\\'.$name.'Controller')) {
